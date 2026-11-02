@@ -13,7 +13,7 @@ export const COURSES = [
   { id: 'percent', title: 'אחוזים', icon: '🧮', grade: 'י״א', url: 'https://enavcorem.github.io/excel/percent/' },
   { id: 'dates', title: 'תאריכים', icon: '📅', grade: 'י״א', url: 'https://enavcorem.github.io/excel/dates/' },
   { id: 'pivot', title: 'פיבוט מתקדם', icon: '🥧', grade: 'י״א', url: 'https://enavcorem.github.io/excel/pivot/' },
-  { id: 'parta', title: 'חלק א׳: גרפים ומקורות', icon: '📈', grade: 'י״א', url: 'https://enavcorem.github.io/part-a-learning/' },
+  { id: 'parta', title: 'חלק א׳: גרפים ומקורות', icon: '📈', grade: 'י״א', url: 'https://enavcorem.github.io/part-a/' },
   { id: 'client', title: 'הלקוח שלנו (י״ב)', icon: '🤝', grade: 'י״ב', url: 'https://enavcorem.github.io/client-learning/' },
 ];
 

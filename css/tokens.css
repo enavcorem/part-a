@@ -1,0 +1,72 @@
+/* ===== טוקני עיצוב — מקור אמת יחיד לכל הצבעים/גופנים/מרווחים באפליקציה =====
+   כל קובץ CSS/JS אחר משתמש רק במשתנים האלה, כדי שהעיצוב יישאר עקבי
+   כשמוסיפים פרק או יחידה חדשה. אין להוסיף צבעים "חד-פעמיים" בקבצים אחרים. */
+
+:root {
+  /* --- פלטת בסיס (מ-index.html המקורי, שכבר עבד טוב) --- */
+  --color-primary: #6C63FF;
+  --color-primary-dark: #5A52D5;
+  --color-secondary: #2EC4B6;
+  --color-accent: #FF9F1C;
+
+  /* --- צבע ייחודי לכל פרק, לזיהוי ויזואלי לאורך המסלול --- */
+  --chapter-1: #6C63FF;  /* צבע פרק 1 */
+  --chapter-2: #2EC4B6;  /* צבע פרק 2 */
+  --chapter-3: #FF9F1C;  /* צבע פרק 3 */
+  --chapter-4: #FF6B6B;  /* צבע פרק 4 */
+  --chapter-5: #4A90E2;  /* צבע פרק 5 */
+  --chapter-6: #9B59B6;  /* צבע פרק 6 */
+  --chapter-7: #2ECC9A;  /* צבע פרק 7 */
+
+  /* --- ניטרלים --- */
+  --bg: #F5F5FB;
+  --card-bg: #FFFFFF;
+  --text: #2E2E3A;
+  --text-muted: #767685;
+  --text-faint: #A9A9B8;
+  --border: #ECECF5;
+  --success: #2ECC71;
+  --success-bg: #E7F9EE;
+  --danger: #E5484D;
+  --danger-bg: #FDEDEE;
+
+  /* --- גופנים --- */
+  --font-display: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-body: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* --- מרווחים --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* --- עיגול פינות --- */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 999px;
+
+  /* --- צללים --- */
+  --shadow-sm: 0 2px 8px rgba(46,46,58,0.06);
+  --shadow-md: 0 8px 24px rgba(46,46,58,0.10);
+  --shadow-lg: 0 16px 40px rgba(108,99,255,0.16);
+
+  /* --- תנועה --- */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 500ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* מיפוי עזר: קבלת צבע פרק לפי מספר, לשימוש ב-JS (getComputedStyle) */
+.chapter-color-1 { --c: var(--chapter-1); }
+.chapter-color-2 { --c: var(--chapter-2); }
+.chapter-color-3 { --c: var(--chapter-3); }
+.chapter-color-4 { --c: var(--chapter-4); }
+.chapter-color-5 { --c: var(--chapter-5); }
+.chapter-color-6 { --c: var(--chapter-6); }
+.chapter-color-7 { --c: var(--chapter-7); }

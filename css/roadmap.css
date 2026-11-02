@@ -1,0 +1,228 @@
+/* ===== מפת מסלול — גרסה מתונה: פס פרקים למעלה + כרטיסיות למטה ===== */
+
+/* --- פס המסלול (7 עיגולים מחוברים) --- */
+.path-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-3);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-5);
+  position: relative;
+  overflow-x: auto;
+}
+.path-strip .path-node-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  flex: 1;
+  min-width: 40px;
+}
+.path-strip .path-node-wrap:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  right: 50%;
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+  z-index: 0;
+  transform: translateX(50%);
+}
+.path-strip .path-node-wrap.state-completed:not(:last-child)::after,
+.path-strip .path-node-wrap.state-exempted:not(:last-child)::after {
+  background: var(--success);
+}
+.path-node {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  z-index: 1;
+  background: var(--border);
+  color: var(--text-faint);
+  border: 3px solid var(--card-bg);
+  box-shadow: 0 0 0 2px var(--border);
+  transition: transform var(--duration-fast) var(--ease);
+}
+.path-node-wrap.state-current .path-node {
+  background: var(--node-color, var(--color-primary));
+  color: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--node-color, var(--color-primary)) 25%, transparent);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+.path-node-wrap.state-completed .path-node,
+.path-node-wrap.state-exempted .path-node {
+  background: var(--success);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--success);
+}
+.path-node-wrap.state-locked .path-node { background: var(--border); color: var(--text-faint); }
+.path-node-label { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
+
+/* פס "כל הפרקים פתוחים" — המורה פתחה את הלומדה לכיתה (js/progress.js) */
+.course-open-note {
+  background: var(--card-bg);
+  border: 1px dashed var(--chapter-6);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* --- XP counter --- */
+/* תג "מצב כיתה" — מוצג במקום מונה ה-XP כשהנעילה מבוטלת (?class=1).
+   שייך למנוע ולא לקורס: התכונה עצמה יושבת ב-js/progress.js. */
+.xp-counter.class-mode-badge {
+  background: var(--chapter-6);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+}
+
+.xp-counter {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-weight: 700;
+  color: var(--color-accent);
+  font-size: 1rem;
+}
+
+/* --- כרטיסי פרק --- */
+.chapter-band {
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-4);
+  margin: var(--space-6) 0 var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: color-mix(in srgb, var(--band-color, var(--color-primary)) 12%, white);
+  color: var(--band-color, var(--color-primary));
+}
+.chapter-band .chapter-icon { font-size: 1.3rem; }
+
+.unit-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: var(--text);
+  transition: transform var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease);
+}
+.unit-card:not(.locked):hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.unit-card.locked { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+.unit-card .unit-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  background: color-mix(in srgb, var(--band-color, var(--color-primary)) 15%, white);
+}
+.unit-card .unit-title { font-weight: 700; }
+.unit-card .unit-meta { font-size: 0.8rem; color: var(--text-muted); }
+.unit-card .unit-status { margin-inline-start: auto; font-size: 1.3rem; }
+
+.unit-card.type-exemption {
+  border: 2px dashed var(--band-color, var(--color-accent));
+  background: color-mix(in srgb, var(--band-color, var(--color-accent)) 6%, white);
+}
+.unit-card.type-exemption .unit-icon { transform: rotate(45deg); }
+.unit-card.type-exemption .unit-icon span { transform: rotate(-45deg); display: block; }
+
+.unit-card.type-bonus {
+  border: 1.5px dotted color-mix(in srgb, var(--band-color, var(--color-accent)) 60%, var(--text-faint));
+  background: color-mix(in srgb, var(--band-color, var(--color-accent)) 4%, white);
+}
+
+.unit-card.coming-soon { opacity: 0.5; }
+.unit-card.coming-soon .unit-meta { font-style: italic; }
+
+/* --- פס התקדמות כללי --- */
+.overall-progress { margin-bottom: var(--space-4); }
+.overall-progress-track {
+  height: 10px; border-radius: var(--radius-full);
+  background: var(--border); overflow: hidden;
+}
+.overall-progress-fill {
+  height: 100%; border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  transition: width var(--duration-slow) var(--ease);
+}
+.overall-progress-text { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--node-color, var(--color-primary)) 25%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--node-color, var(--color-primary)) 10%, transparent); }
+}
+
+@media (max-width: 480px) {
+  .path-node { width: 30px; height: 30px; font-size: 0.85rem; }
+  .path-node-label { display: none; }
+}
+
+/* ===== מסך הכניסה: קוד כיתה → בחירת שם ===== */
+.login-card-student .input-field { margin: 4px 0 var(--space-3); }
+.class-code-input {
+  direction: ltr;
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.3em;
+}
+.login-msg { color: var(--danger); min-height: 1.4em; margin-bottom: var(--space-2); font-size: 0.95rem; }
+.class-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+  font-weight: 500;
+}
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.name-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.name-option {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease);
+}
+.name-option:hover { border-color: var(--color-primary); }
+.name-option[aria-pressed="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+.name-option-new { border-style: dashed; color: var(--text-muted); }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- הכותרת נקבעת בזמן ריצה לפי COURSE שב-content/manifest.js -->
+  <title>לוח מורה</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+  <div id="login-screen" class="login-wrap">
+    <div class="card login-card">
+      <div class="icon">👩‍🏫</div>
+      <h1>לוח מורה</h1>
+      <p class="muted">שם המשתמש והסיסמה שקיבלת</p>
+      <input type="text" id="teacher-login" class="input-field ltr-field" placeholder="שם משתמש" autocomplete="username" style="margin-bottom:var(--space-3);text-align:center;">
+      <input type="password" autocomplete="current-password" id="teacher-pass" class="input-field" placeholder="סיסמה" style="margin-bottom:var(--space-3);text-align:center;">
+      <button type="button" id="login-btn" class="btn btn-primary btn-block">כניסה</button>
+      <div class="err" id="pass-err"></div>
+    </div>
+  </div>
+
+  <div id="dashboard" class="teacher-container" style="display:none;">
+    <div class="teacher-top">
+      <h1 id="teacher-title">לוח מורה</h1>
+      <span class="muted"><span id="teacher-who"></span> · <span id="last-refresh"></span> · <button type="button" id="logout-btn" class="link-btn">יציאה</button></span>
+    </div>
+    <div class="courses-bar" id="courses-bar"></div>
+
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="class-codes" id="class-codes"></div>
+    <div class="card form-panel" id="form-panel" style="display:none;"></div>
+
+    <div class="filters-row">
+      <select id="filter-class" class="input-field"></select>
+      <input type="text" id="filter-name" class="input-field" placeholder="חיפוש לפי שם...">
+      <button type="button" id="refresh-btn" class="btn btn-ghost">🔄 רענון</button>
+    </div>
+
+    <div class="legend-row">
+      <span><span class="dot dot-completed">✓</span> הושלם</span>
+      <span><span class="dot dot-current">▶</span> בתהליך</span>
+      <span><span class="dot dot-locked">—</span> עדיין לא</span>
+    </div>
+
+    <div class="table-card">
+      <div id="loading-msg" class="empty-state">טוענת נתונים... ⏳</div>
+      <div id="no-students" class="empty-state" style="display:none;">אין עדיין תלמידות רשומות</div>
+      <table id="students-table" class="teacher-table" style="display:none;">
+        <thead>
+          <tr id="table-head-row"></tr>
+        </thead>
+        <tbody id="students-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module" src="teacher-dashboard.js"></script>
+</body>
+</html>

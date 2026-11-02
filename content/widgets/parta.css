@@ -1,0 +1,166 @@
+/* ===== העיצוב של לומדת חלק א': גרפים, מקורות, ומסך בסגנון iTest =====
+   נטען מ-index.html. הצבעים כטוקנים כאן, לא בתוך הרכיבים. */
+
+:root {
+  --pa-s1: #4A6CF7;   /* סדרה 1 */
+  --pa-s2: #F28C28;   /* סדרה 2 */
+  --pa-s3: #2EAA7A;   /* סדרה 3 */
+  --pa-s4: #B04FC4;   /* סדרה 4 */
+  --pa-grid: #E4E4EE;
+  --pa-axis: #8C8C9C;
+  --pa-ink: #3A3A48;
+  --pa-source-bg: #FBFAF4;
+  --pa-source-border: #E6E1C8;
+  --pa-model-bg: #EEF7F1;
+  --pa-model-border: #BFE3CC;
+  --pa-itest-bar: #1F3B63;
+  --pa-itest-bar-ink: #FFFFFF;
+  --pa-itest-pane: #F4F6FA;
+}
+
+/* ===== גרף ===== */
+.pa-chart { margin: 0 0 var(--space-4); }
+.pa-chart-title { font-weight: 700; text-align: center; margin-bottom: var(--space-2); color: var(--pa-ink); }
+.pa-chart-svg { width: 100%; height: auto; display: block; direction: ltr; }
+.pa-chart-svg text { font-family: var(--font-body); fill: var(--pa-ink); unicode-bidi: plaintext; }
+.pa-tick { font-size: 12px; fill: var(--text-muted) !important; }
+.pa-cat { font-size: 13px; fill: var(--pa-ink) !important; }
+.pa-axis-label { font-size: 13px; font-weight: 500; }
+.pa-value { font-size: 11px; font-weight: 500; }
+.pa-value-in { fill: #fff !important; }
+.pa-grid { stroke: var(--pa-grid); stroke-width: 1; }
+.pa-axis { stroke: var(--pa-axis); stroke-width: 1.2; }
+.pa-line { fill: none; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
+.pa-dot { stroke: #fff; stroke-width: 1.5; }
+.pa-line.pa-s1, .pa-legend-item.pa-s1 .is-line { stroke: var(--pa-s1); border-color: var(--pa-s1); }
+.pa-line.pa-s2, .pa-legend-item.pa-s2 .is-line { stroke: var(--pa-s2); border-color: var(--pa-s2); }
+.pa-line.pa-s3, .pa-legend-item.pa-s3 .is-line { stroke: var(--pa-s3); border-color: var(--pa-s3); }
+.pa-line.pa-s4, .pa-legend-item.pa-s4 .is-line { stroke: var(--pa-s4); border-color: var(--pa-s4); }
+.pa-dot.pa-s1, .pa-bar.pa-s1, .pa-s1 .pa-legend-swatch { fill: var(--pa-s1); background: var(--pa-s1); }
+.pa-dot.pa-s2, .pa-bar.pa-s2, .pa-s2 .pa-legend-swatch { fill: var(--pa-s2); background: var(--pa-s2); }
+.pa-dot.pa-s3, .pa-bar.pa-s3, .pa-s3 .pa-legend-swatch { fill: var(--pa-s3); background: var(--pa-s3); }
+.pa-dot.pa-s4, .pa-bar.pa-s4, .pa-s4 .pa-legend-swatch { fill: var(--pa-s4); background: var(--pa-s4); }
+.pa-chart-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2) var(--space-4); font-size: 0.85rem; margin-bottom: var(--space-1); }
+.pa-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.pa-legend-swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+.pa-legend-swatch.is-line { height: 0; border-top: 3px solid; border-radius: 0; background: none !important; width: 20px; }
+.pa-chart-source { font-size: 0.78rem; color: var(--text-muted); margin-top: var(--space-1); }
+
+/* ===== מקור מידע ===== */
+.pa-source { background: var(--pa-source-bg); border: 1px solid var(--pa-source-border); border-radius: var(--radius-sm); padding: var(--space-4); margin-bottom: var(--space-4); }
+.pa-source-head { display: flex; gap: var(--space-2); align-items: baseline; font-weight: 700; }
+.pa-source-meta { font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 var(--space-2); }
+.pa-source-body p { margin: 0 0 var(--space-2); line-height: 1.7; }
+
+/* ===== פריט: טענה / שאלה ===== */
+.pa-item { padding: var(--space-3) 0; border-top: 1px dashed var(--border); }
+.pa-item:first-of-type { border-top: 0; }
+.pa-item-head { display: flex; gap: var(--space-2); align-items: flex-start; margin-bottom: var(--space-2); }
+.pa-item-label { font-weight: 700; white-space: nowrap; }
+.pa-item-claim { font-weight: 500; line-height: 1.6; }
+.pa-item-prompt { margin-bottom: var(--space-2); line-height: 1.6; }
+.pa-choices { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); flex-wrap: wrap; }
+.pa-choice-sep { color: var(--text-faint); }
+.pa-choice { border: 2px solid var(--border); background: var(--card-bg); border-radius: var(--radius-full); padding: 6px 18px; font: inherit; cursor: pointer; transition: all var(--duration-fast) var(--ease); }
+.pa-choice:hover:not(:disabled) { border-color: var(--color-primary); }
+.pa-choice[aria-checked="true"] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.pa-choice:disabled { opacity: 0.6; cursor: default; }
+.pa-why-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+.pa-textarea { width: 100%; resize: vertical; min-height: 4.5em; line-height: 1.6; }
+.pa-loading { opacity: 0.6; }
+.pa-model { background: var(--pa-model-bg); border: 1px solid var(--pa-model-border); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); margin-top: var(--space-3); }
+.pa-model-title { font-weight: 700; margin: var(--space-1) 0; }
+.pa-model-answer { line-height: 1.7; margin-bottom: var(--space-2); }
+.pa-rubric { list-style: none; padding: 0; margin: 0; }
+.pa-rubric li { display: flex; gap: var(--space-2); align-items: flex-start; padding: 3px 0; }
+.pa-rubric input { margin-top: 0.35em; }
+.pa-reveal-btn { margin-top: var(--space-3); }
+.pa-answer .pa-item { border-top: 0; padding-top: 0; }
+
+/* ===== חיווי שמירה ===== */
+.pa-save-status { position: fixed; bottom: 12px; inset-inline-start: 12px; z-index: 1300; font-size: 0.8rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-full); padding: 4px 12px; box-shadow: var(--shadow-sm); }
+.pa-save-status:empty { display: none; }
+.pa-save-status[data-state="offline"] { color: var(--danger); }
+
+/* ===== כרטיס הפתיחה של מסך הבחינה ===== */
+.pa-itest-card { display: flex; gap: var(--space-4); align-items: flex-start; border: 2px solid var(--pa-itest-bar); border-radius: var(--radius-md); padding: var(--space-4); background: var(--pa-itest-pane); }
+.pa-itest-card-icon { font-size: 2rem; }
+.pa-itest-card-title { font-weight: 700; font-size: 1.1rem; }
+.pa-itest-card-desc { margin: var(--space-1) 0; line-height: 1.6; }
+.pa-itest-card-status { font-size: 0.85rem; color: var(--text-muted); margin-bottom: var(--space-3); }
+
+/* ===== מסך הבחינה ===== */
+.pa-itest { position: fixed; inset: 0; z-index: 1200; background: var(--bg); display: flex; flex-direction: column; }
+.pa-itest-bar { display: flex; align-items: center; gap: var(--space-3); background: var(--pa-itest-bar); color: var(--pa-itest-bar-ink); padding: var(--space-2) var(--space-4); flex-wrap: wrap; }
+.pa-itest-bar-title { font-weight: 700; flex: 1; min-width: 8em; }
+.pa-itest-nav { display: flex; gap: var(--space-1); flex-wrap: wrap; }
+.pa-itest-nav[hidden] { display: none; }
+.pa-itest-nav-btn { background: transparent; color: inherit; border: 1px solid rgba(255,255,255,0.5); border-radius: var(--radius-sm); padding: 4px 12px; font: inherit; cursor: pointer; }
+.pa-itest-nav-btn.is-active { background: #fff; color: var(--pa-itest-bar); }
+.pa-itest-close { background: #fff; color: var(--pa-itest-bar); border: 0; border-radius: var(--radius-sm); padding: 6px 14px; font: inherit; font-weight: 500; cursor: pointer; }
+.pa-itest-main { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: 0; }
+.pa-itest-q, .pa-itest-r { overflow-y: auto; padding: var(--space-5); }
+.pa-itest-q { background: var(--card-bg); border-inline-end: 1px solid var(--border); }
+.pa-itest-r { background: var(--pa-itest-pane); }
+.pa-itest-header { font-size: 0.85rem; color: var(--text-muted); margin-bottom: var(--space-2); }
+.pa-itest-qtitle { margin-top: 0; }
+.pa-points { font-weight: 400; font-size: 0.85em; color: var(--text-muted); }
+.pa-itest-intro { line-height: 1.75; margin-bottom: var(--space-4); }
+.pa-part { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+.pa-part-head { display: flex; gap: var(--space-2); margin-bottom: var(--space-2); line-height: 1.6; }
+.pa-part-label { font-weight: 800; }
+.pa-itest-next { margin-top: var(--space-4); }
+.pa-res-tabs { display: flex; gap: var(--space-1); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.pa-res-tab { border: 1px solid var(--border); background: var(--card-bg); border-radius: var(--radius-sm); padding: 5px 12px; font: inherit; cursor: pointer; }
+.pa-res-tab[aria-selected="true"] { background: var(--pa-itest-bar); color: #fff; border-color: var(--pa-itest-bar); }
+.pa-res-view { background: var(--card-bg); border-radius: var(--radius-sm); padding: var(--space-4); }
+.pa-res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-3); }
+.pa-res-thumb { text-align: start; border: 1px solid var(--border); background: var(--card-bg); border-radius: var(--radius-sm); padding: var(--space-2); cursor: zoom-in; font: inherit; color: inherit; }
+.pa-res-thumb:hover { border-color: var(--color-primary); }
+.pa-res-thumb-label { font-weight: 700; font-size: 0.85rem; margin-bottom: var(--space-1); }
+.pa-res-thumb .pa-source { font-size: 0.8rem; max-height: 14em; overflow: hidden; margin: 0; }
+.pa-zoom-btn { margin-top: var(--space-2); }
+.pa-zoom { position: fixed; inset: 0; z-index: 1250; background: rgba(20,24,40,0.6); display: flex; align-items: center; justify-content: center; padding: var(--space-4); }
+.pa-zoom-inner { background: var(--card-bg); border-radius: var(--radius-md); padding: var(--space-5); width: min(1000px, 100%); max-height: 100%; overflow: auto; position: relative; }
+.pa-zoom-inner .pa-itest-close { background: var(--pa-itest-bar); color: #fff; float: left; }
+.pa-itest-mobile-tabs { display: none; }
+
+@media (max-width: 860px) {
+  .pa-itest-main { grid-template-columns: 1fr; }
+  .pa-itest-mobile-tabs { display: flex; background: var(--pa-itest-pane); border-bottom: 1px solid var(--border); }
+  .pa-itest-mobile-tabs button { flex: 1; border: 0; background: transparent; padding: var(--space-2); font: inherit; cursor: pointer; }
+  .pa-itest-mobile-tabs button.is-active { background: var(--card-bg); font-weight: 700; box-shadow: inset 0 -3px 0 var(--pa-itest-bar); }
+  .pa-itest-main .pa-itest-r { display: none; }
+  .pa-itest-main[data-show="r"] .pa-itest-r { display: block; }
+  .pa-itest-main[data-show="r"] .pa-itest-q { display: none; }
+  .pa-itest-q, .pa-itest-r { padding: var(--space-4) var(--space-3); }
+  .pa-itest-card { flex-direction: column; }
+}
+
+/* טווחי מספרים בתוך עברית (ltrRanges ב-chart.js): לא נשברים באמצע */
+.pa-ltr { unicode-bidi: isolate; white-space: nowrap; }
+.pa-chart-subtitle { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin: -4px 0 var(--space-2); }
+.pa-chart-note { font-size: 0.85rem; color: var(--pa-ink); margin-top: var(--space-2); line-height: 1.6; border-top: 1px solid var(--pa-grid); padding-top: var(--space-1); }
+.pa-slice { stroke: #fff; stroke-width: 2; }
+
+/* ===== גרף בתוך שאלת מבחן (quiz-charts.js) ===== */
+.pa-qchart { font-weight: 400; font-size: 1rem; margin: 0 auto var(--space-4); max-width: 560px; }
+.pa-qchart .pa-chart + .pa-chart { margin-top: var(--space-4); }
+
+/* ===== review: התשובה שלכם ולידה התשובה לדוגמה ===== */
+.pa-review-item { border-top: 1px solid var(--pa-model-border); padding-top: var(--space-4); margin-top: var(--space-4); }
+.pa-review-title { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+.pa-review-mine { white-space: pre-wrap; line-height: 1.7; padding: var(--space-2) var(--space-3); border: 1px dashed var(--pa-model-border); border-radius: var(--radius-sm); }
+.pa-qchart .pa-source { text-align: start; margin-top: var(--space-3); }
+
+/* ===== המיני-בגרות (exam.js) ===== */
+.pa-exam-code { display: flex; gap: var(--space-2); margin-top: var(--space-3); max-width: 22rem; }
+.pa-exam-code .input-field { flex: 1; direction: ltr; text-align: center; letter-spacing: 0.15em; }
+.pa-exam-msg { color: var(--danger); min-height: 1.4em; margin-top: var(--space-2); }
+.pa-exam-timer { font-weight: 700; padding: 4px 12px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.15); white-space: nowrap; }
+.pa-exam-timer.is-over { background: var(--danger); }
+.pa-exam-submit { margin-top: var(--space-5); padding: var(--space-4); border: 2px solid var(--pa-itest-bar); border-radius: var(--radius-md); background: var(--pa-itest-pane); }
+.pa-exam-submit .btn.is-armed { background: var(--danger); border-color: var(--danger); }
+.pa-exam-fb { margin: var(--space-2) 0 var(--space-3); padding: var(--space-3); border-radius: var(--radius-sm); background: var(--pa-model-bg); border: 1px solid var(--pa-model-border); }
+.pa-exam-fb-score { font-weight: 700; }
+.pa-exam-fb-note { white-space: pre-wrap; margin-top: var(--space-1); line-height: 1.6; }

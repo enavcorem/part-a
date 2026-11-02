@@ -1,0 +1,79 @@
+/* ===== שאלות ומבחנים ===== */
+
+.question-block {
+  background: #FCFCFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+.question-prompt { font-weight: 700; margin-bottom: var(--space-3); }
+.question-topic-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--border);
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  margin-bottom: var(--space-2);
+}
+
+/* --- רב-ברירה --- */
+.options { display: flex; flex-direction: column; gap: var(--space-2); }
+.btn-option {
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-size: 1rem;
+  text-align: right;
+  transition: all var(--duration-fast) var(--ease);
+}
+.btn-option:not(:disabled):hover { border-color: var(--color-primary); background: #F7F6FF; }
+.btn-option.correct { background: var(--success-bg); border-color: var(--success); color: #1E8449; font-weight: 700; }
+.btn-option.wrong { background: var(--danger-bg); border-color: var(--danger); color: #A6231F; animation: shake 0.35s var(--ease); }
+.btn-option:disabled:not(.correct):not(.wrong) { opacity: 0.5; }
+
+.feedback { margin-top: var(--space-3); font-weight: 700; min-height: 22px; }
+.feedback.ok { color: #1E8449; }
+.feedback.hint { color: #B9770E; font-weight: 500; }
+
+/* --- מספרי / נוסחה --- */
+.numeric-row { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.numeric-row .input-field { max-width: 180px; }
+.numeric-row .unit-label { color: var(--text-muted); }
+
+/* --- התאמה (tap-to-match) --- */
+.match-grid { display: flex; gap: var(--space-5); }
+.match-col { flex: 1; display: flex; flex-direction: column; gap: var(--space-2); }
+.match-item {
+  background: #fff; border: 2px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 14px; text-align: center; font-size: 0.92rem; cursor: pointer;
+}
+.match-item:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.match-item.selected { border-color: var(--color-primary); background: #F0EFFF; }
+.match-item.matched { border-color: var(--success); background: var(--success-bg); color: #1E8449; cursor: default; }
+
+/* --- דוח טעויות --- */
+.mistake-report { margin-top: var(--space-5); text-align: right; }
+.mistake-item {
+  border-inline-start: 4px solid var(--danger);
+  background: var(--danger-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.mistake-item .mi-q { font-weight: 700; margin-bottom: 4px; }
+.mistake-item .mi-expl { color: var(--text-muted); font-size: 0.92rem; }
+.all-correct { text-align: center; color: #1E8449; font-weight: 700; padding: var(--space-4); }
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+/* --- מסך אתגר-פטור --- */
+.exemption-intro { text-align: center; padding: var(--space-5) 0; }
+.exemption-intro .exemption-icon { font-size: 3rem; }

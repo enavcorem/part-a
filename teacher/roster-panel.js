@@ -79,7 +79,7 @@ function render() {
       <label><input type="radio" name="rp-open" value="0" ${isOpen ? '' : 'checked'}>
         <strong>🔒 לפי הסדר</strong> <span class="muted">— פרק נפתח אחרי שמסיימים את הקודם, או עוברים את אתגר הפטור</span></label>
       <label><input type="radio" name="rp-open" value="1" ${isOpen ? 'checked' : ''}>
-        <strong>🔓 הכול פתוח (לחזרה)</strong> <span class="muted">— כל הפרקים פתוחים לכיתה הזו, למשל לפני מבחן. בלומדות האחרות לא משתנה כלום</span></label>
+        <strong>🔓 כל הפרקים פתוחים (לחזרה)</strong> <span class="muted">— אפשר להיכנס לכל פרק בלי לסיים את הקודם, למשל לפני מבחן. בתוך כל פרק, היחידות עדיין לפי הסדר. בלומדות האחרות לא משתנה כלום</span></label>
     </fieldset>`}
 
     ${rows.length ? `

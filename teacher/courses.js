@@ -6,6 +6,8 @@
 // grade: הקבוצה בתפריט. url: null = עוד לא פורסמה, ולא מוצג קישור.
 
 export const COURSES = [
+  // כיתה י'. לומדה של כרמל (מורה שותפה), בתת-תיקייה בריפו הסטטיסטיקה
+  { id: 'cs1', title: 'סוגי גרפים', icon: '📊', grade: 'י׳', url: 'https://enavcorem.github.io/statistics-learning/graphs-10/' },
   { id: 'stat', title: 'סטטיסטיקה', icon: '📊', grade: 'י״א', url: 'https://enavcorem.github.io/statistics-learning/' },
   { id: 'xlookup', title: 'XLOOKUP', icon: '🔗', grade: 'י״א', url: 'https://enavcorem.github.io/xlookup-learning/' },
   { id: 'func', title: 'ארגז הכלים — פונקציות', icon: '🧰', grade: 'י״א', url: 'https://enavcorem.github.io/functions-learning/' },

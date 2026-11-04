@@ -107,6 +107,22 @@ function practiceNumeric(question, onSolved) {
   return wrap;
 }
 
+// מערבב עד שאף פריט לא נמצא במקום המקורי שלו (pairIndex === מיקום).
+// בשני פריטים זה תמיד היפוך. מעל זה, בערך שליש מהערבובים עוברים כבר בניסיון הראשון.
+function derange(items) {
+  const a = items.slice();
+  if (a.length < 2) return a;
+  for (let tries = 0; tries < 50; tries++) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    if (a.every((x, i) => x.pairIndex !== i)) return a;
+  }
+  // גיבוי (כמעט לא קורה): הזזה מעגלית במקום אחד היא תמיד ערבוב בלי נקודות קבועות.
+  return items.slice(1).concat(items[0]);
+}
+
 function practiceMatch(question, onSolved) {
   const wrap = el('div', 'question-block');
   wrap.appendChild(el('div', 'question-prompt', question.prompt));
@@ -116,7 +132,10 @@ function practiceMatch(question, onSolved) {
   const feedback = el('div', 'feedback');
 
   const pairs = question.pairs;
-  const rightShuffled = pairs.map((p, i) => ({ text: p.right, pairIndex: i })).sort(() => Math.random() - 0.5);
+  // 4.11: ערבוב אמיתי (Fisher–Yates), ואף פריט בימין לא נשאר מול בן הזוג שלו.
+  // קודם היה sort(() => Math.random() - 0.5): ערבוב מוטה, שבשלושה פריטים השאיר
+  // אותם הרבה פעמים בסדר המקורי, וההתאמה הייתה "אחד מול השני" (המורה, 4.11).
+  const rightShuffled = derange(pairs.map((p, i) => ({ text: p.right, pairIndex: i })));
 
   let selectedLeft = null;
   let matchedCount = 0;

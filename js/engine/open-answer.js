@@ -24,8 +24,10 @@
 
 import * as Progress from '../progress.js';
 import { COURSE_ID } from '../../content/manifest.js';
+import { tv } from './phrases.js';
 
-const UNSYNCED_KEY = `${COURSE_ID || 'lomda'}_open_unsynced_v1`;
+// בתצוגת מורה מפתח נפרד: אחרת התצוגה הייתה מנקה "שינוי שלא הגיע לשרת" של תלמידה אמיתית באותו מכשיר
+const UNSYNCED_KEY = `${COURSE_ID || 'lomda'}_open_unsynced${Progress.isPreview() ? '_preview' : ''}_v1`;
 const SAVE_DELAY_MS = 800;
 const READY_TIMEOUT_MS = 4000;
 
@@ -230,7 +232,7 @@ function build(block, wrap, refreshed) {
 
   const ta = el('textarea', 'input-field oa-textarea');
   ta.rows = block.rows || (kind === 'text' ? 4 : 3);
-  ta.placeholder = block.placeholder || (kind === 'text' ? 'כתבו כאן את התשובה' : '');
+  ta.placeholder = block.placeholder || (kind === 'text' ? tv('oa_placeholder') : '');
   ta.setAttribute('aria-label', kind === 'text' ? 'תשובה' : 'נימוק');
   ta.value = state.text;
   ta.addEventListener('input', () => { state.text = ta.value; commit(); });
@@ -248,7 +250,7 @@ function build(block, wrap, refreshed) {
 
   if (block.model) {
     const model = buildModel(block.model, key);
-    revealBtn = el('button', 'btn btn-secondary oa-reveal-btn', block.revealLabel || 'הציגו תשובה לדוגמה');
+    revealBtn = el('button', 'btn btn-secondary oa-reveal-btn', block.revealLabel || tv('oa_reveal_btn'));
     revealBtn.type = 'button';
     revealBtn.disabled = !isAnswered();
     revealBtn.title = 'נפתח אחרי שכותבים תשובה';

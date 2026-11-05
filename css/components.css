@@ -209,3 +209,16 @@
 .oa-rubric { list-style: none; padding: 0; margin: 0; }
 .oa-rubric li { display: flex; gap: var(--space-2); align-items: flex-start; padding: 3px 0; }
 .oa-rubric input { margin-top: 0.35em; }
+
+/* ===== תג "תצוגת מורה" (?preview=1) — נוצר ב-js/engine/preview-badge.js ===== */
+.preview-badge { position: fixed; bottom: var(--space-3); inset-inline: var(--space-3); margin-inline: auto; width: fit-content; max-width: calc(100% - 2 * var(--space-3)); z-index: 1000;
+  display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; justify-content: center;
+  background: var(--text); color: #fff; border-radius: var(--radius-full); padding: 6px var(--space-4); box-shadow: var(--shadow-md); font-size: 0.85rem; }
+.preview-badge-label { font-weight: 700; }
+.preview-badge-voice { display: flex; gap: 2px; background: rgba(255,255,255,0.14); border-radius: var(--radius-full); padding: 2px; }
+.preview-badge-voice button, .preview-badge-fixed { border: 0; background: transparent; color: inherit; font: inherit; padding: 3px 12px; border-radius: var(--radius-full); cursor: pointer; }
+.preview-badge-fixed { cursor: default; }
+.preview-badge-voice button[aria-pressed="true"] { background: #fff; color: var(--text); font-weight: 700; }
+.preview-badge-exit { border: 1px solid rgba(255,255,255,0.5); background: transparent; color: inherit; font: inherit; padding: 3px 12px; border-radius: var(--radius-full); cursor: pointer; }
+.preview-badge-exit:hover { background: rgba(255,255,255,0.18); }
+body:has(.preview-badge) .app-container { padding-bottom: 104px; }

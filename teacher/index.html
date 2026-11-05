@@ -29,6 +29,7 @@
   <div id="dashboard" class="teacher-container" style="display:none;">
     <div class="teacher-top">
       <h1 id="teacher-title">לוח מורה</h1>
+      <a id="preview-btn" class="btn btn-ghost" href="../?preview=1" target="_blank" rel="noopener" hidden title="פותח את הלומדה כמו שתלמידה רואה אותה, עם הכול פתוח. שום דבר לא נשמר, ואין תלמידה חדשה ברשימה">👁️ תצוגה כמו תלמידה</a>
       <span class="muted"><span id="teacher-who"></span> · <span id="last-refresh"></span> · <button type="button" id="logout-btn" class="link-btn">יציאה</button></span>
     </div>
     <div class="courses-bar" id="courses-bar"></div>
@@ -43,6 +44,11 @@
       <input type="text" id="filter-name" class="input-field" placeholder="חיפוש לפי שם...">
       <button type="button" id="refresh-btn" class="btn btn-ghost">🔄 רענון</button>
     </div>
+
+    <details class="weak-topics" id="weak-topics" hidden>
+      <summary>🎯 נושאים לחיזוק</summary>
+      <ul id="weak-topics-list"></ul>
+    </details>
 
     <div class="legend-row">
       <span><span class="dot dot-completed">✓</span> הושלם</span>

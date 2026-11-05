@@ -5,8 +5,17 @@ import { showCelebrateModal, fireConfetti } from './celebrate.js';
 import { setRoadmapScrollHint } from './scroll-hint.js';
 import { getNextUnit, getNextChapter } from '../../content/manifest.js';
 import * as Progress from '../progress.js';
+import { tv } from './phrases.js';
 
 const PASS_MARK_DEFAULT = 80;
+const TOPIC_MAX = 60;
+
+// מחרוזת של עד 60 תווים, או null. תגיות HTML מוסרות (למקרה שנושא נכתב עם עיצוב).
+function topicForSave(topic) {
+  if (typeof topic !== 'string') return null;
+  const clean = topic.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  return clean ? clean.slice(0, TOPIC_MAX) : null;
+}
 
 export async function runQuiz(unit, container) {
   const mod = await import(`../../content/${unit.modulePath}`);
@@ -23,8 +32,8 @@ export async function runQuiz(unit, container) {
     <a href="#roadmap" class="muted" style="text-decoration:none;font-size:0.85rem;">→ חזרה למסלול</a>
     <h1>${data.title || unit.title}</h1>
     ${isExemption
-      ? `<p class="muted">ציון ${passMark}+ יזכה אותך בפטור מהיחידות של הפרק, ויפתח את הפרק הבא. פחות מזה? לא נורא — נחזור על השיעור הקצר. אפשר לנסות שוב בהמשך.</p>`
-      : `<p class="muted">${data.questions.length} שאלות · ענו על כולן ולחצו על "בדיקת המבחן" בסוף.</p>`}
+      ? `<p class="muted">ציון ${passMark}+ ${tv('exemption_intro')}</p>`
+      : `<p class="muted">${data.questions.length} שאלות · ${tv('exam_intro')}</p>`}
   `;
   wrap.appendChild(header);
 
@@ -60,6 +69,9 @@ export async function runQuiz(unit, container) {
       question_text: r.question.prompt,
       answer_given: r.userAnswerText,
       is_correct: r.isCorrect,
+      // נושא השאלה, מחרוזת קצרה בלבד (לוח המורה מסכם ממנו "נושאים לחיזוק").
+      // לא גרף, לא תוכן השאלה ולא אובייקט. רשומות ישנות בלי topic נשארות תקינות.
+      topic: topicForSave(r.question.topic),
     })));
 
     resultArea.innerHTML = '';
@@ -117,7 +129,7 @@ export async function runQuiz(unit, container) {
           // "עושים פתור לפרק אז ממרכזים את הפרק הבא" — לא את היחידה הבודדת.
           const nextChapter = getNextChapter(unit.chapterId);
           if (nextChapter) setRoadmapScrollHint({ type: 'chapter', id: nextChapter.id });
-          showCelebrateModal({ icon: '🏅', title: 'פטור התקבל בהצלחה!', subtitle: 'עברת את אתגר הפטור', xpGained, onClose: () => { location.hash = '#roadmap'; } });
+          showCelebrateModal({ icon: '🏅', title: 'פטור התקבל בהצלחה!', subtitle: tv('exemption_done_subtitle'), xpGained, onClose: () => { location.hash = '#roadmap'; } });
         } else {
           location.hash = '#roadmap';
         }
@@ -138,7 +150,7 @@ export async function runQuiz(unit, container) {
       }
       continueBtn.textContent = 'חזרה למסלול';
       continueBtn.addEventListener('click', () => {
-        showCelebrateModal({ icon: passed ? '🎉' : '💪', title: passed ? 'כל הכבוד!' : 'סיימת את המבחן', subtitle: data.title || unit.title, xpGained: 20, onClose: () => { location.hash = '#roadmap'; } });
+        showCelebrateModal({ icon: passed ? '🎉' : '💪', title: passed ? 'כל הכבוד!' : tv('quiz_done_title'), subtitle: data.title || unit.title, xpGained: 20, onClose: () => { location.hash = '#roadmap'; } });
       });
     }
 

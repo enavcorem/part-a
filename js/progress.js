@@ -25,7 +25,42 @@
 // לפי ה-id, ובכניסה מחפשים קודם תיקייה קיימת עם אותו id.
 
 import { COURSE, COURSE_ID, getFlatUnits, findUnit, findChapter } from '../content/manifest.js';
-import { supabaseClient } from './supabase-config.js';
+import { supabaseClient as realSupabaseClient } from './supabase-config.js';
+
+// ===== תצוגת מורה: ?preview=1 (פתיחת הלומדה "כמו תלמידה", בלי להיכנס בשם אף אחת) =====
+// החוזה עם לוח המורה: הכתובת <לומדה>/?preview=1. ?preview=0 מכבה ומנקה.
+//
+// מה שחשוב כאן — **שום דבר לא עובר למסד**:
+//  1. השומר היחיד הוא PREVIEW. כל פונקציה שמדברת עם Supabase בודקת אותו בראשה.
+//  2. וכרשת ביטחון, ב-PREVIEW ה-supabaseClient שבקובץ הזה הוא Proxy שזורק
+//     על כל גישה — כך גם פונקציה שתתווסף בעתיד ושתשכח לבדוק לא תגיע לשרת.
+//  3. הנתונים (משתמשת "מורה (תצוגה)", התקדמות ותשובות) יושבים במפתח
+//     localStorage משלהם, ולא נוגעים ב-KEY_ALL/KEY_CURRENT של תלמידה אמיתית
+//     שמחוברת באותו מכשיר. יציאה מוחקת אותם, והתלמידה חוזרת כמו שהייתה.
+//  4. הדגל עצמו ב-sessionStorage: חי בלשונית אחת בלבד, ונעלם כשסוגרים אותה.
+const KEY_PREVIEW_ON = `${COURSE_ID}_preview_on`;
+const KEY_PREVIEW_DATA = `${COURSE_ID}_preview_v1`;
+
+const PREVIEW = (function initPreviewFromUrl() {
+  let param = null;
+  try { param = new URLSearchParams(location.search).get('preview'); } catch (e) { /* */ }
+  try {
+    if (param === '1') sessionStorage.setItem(KEY_PREVIEW_ON, '1');
+    else if (param === '0') {
+      sessionStorage.removeItem(KEY_PREVIEW_ON);
+      localStorage.removeItem(KEY_PREVIEW_DATA);
+    }
+    return sessionStorage.getItem(KEY_PREVIEW_ON) === '1';
+  } catch (e) {
+    return param === '1'; // בלי אחסון: התצוגה חיה רק כל עוד הכתובת מכילה את הפרמטר
+  }
+})();
+
+export function isPreview() { return PREVIEW; }
+
+const supabaseClient = PREVIEW
+  ? new Proxy({}, { get() { throw new Error('preview: אין גישה ל-Supabase בתצוגת מורה'); } })
+  : realSupabaseClient;
 
 // מפתחות האחסון נגזרים מ-COURSE_ID של הקורס, ולא קבועים בקוד המנוע: אם
 // שתי לומדות מתארחות על אותו דומיין (תת-תיקיות של אותו GitHub Pages) הן
@@ -80,6 +115,7 @@ export function isCourseOpenForClass() {
 // שואלת את השרת ומעדכנת את המטמון. מחזירה true אם המצב השתנה.
 // מסד בלי מיגרציה 04 עונה בשגיאה — אז נשארים עם מה שהיה (סגור).
 export async function refreshCourseOpen() {
+  if (PREVIEW) return false;
   const s = getStudent();
   if (!s) return false;
   const before = isCourseOpenForClass();
@@ -145,7 +181,33 @@ function saveBucket(key, bucket) {
 function getCurrentKey() {
   return readJSON(KEY_CURRENT, null);
 }
+function previewBucket() {
+  const saved = readJSON(KEY_PREVIEW_DATA, null);
+  if (saved && saved.student) return saved;
+  return {
+    student: { id: 'preview-teacher', name: 'מורה (תצוגה)', school: '', class_name: '', gender: 'f', preview: true },
+    progress: {}, quizAnswers: {}, exemptionAttempts: [],
+  };
+}
+
+// מתג נקבה/זכר בתג התצוגה
+export function setPreviewGender(g) {
+  if (!PREVIEW) return;
+  const b = previewBucket();
+  b.student.gender = g === 'm' ? 'm' : 'f';
+  writeJSON(KEY_PREVIEW_DATA, b);
+}
+
+// יציאה מהתצוגה: מוחקים את הדגל ואת נתוני התצוגה. תלמידה שהייתה מחוברת
+// באותו מכשיר לא נגענו בה, ולכן היא פשוט חוזרת כמו שהייתה.
+export function exitPreview() {
+  try { sessionStorage.removeItem(KEY_PREVIEW_ON); } catch (e) { /* */ }
+  try { localStorage.removeItem(KEY_PREVIEW_DATA); } catch (e) { /* */ }
+  location.replace(location.pathname + '?preview=0#roadmap');
+}
+
 function getCurrentBucket() {
+  if (PREVIEW) return previewBucket();
   const key = getCurrentKey();
   if (!key) return null;
   const all = getAllBuckets();
@@ -167,6 +229,7 @@ async function throwOnError({ error }) {
 }
 
 async function supabaseUpsertUnitProgress(studentId, unitId, p) {
+  if (PREVIEW) return;
   await throwOnError(await supabaseClient.from('unit_progress').upsert({
     student_id: studentId,
     unit_id: unitId,
@@ -178,6 +241,7 @@ async function supabaseUpsertUnitProgress(studentId, unitId, p) {
 }
 
 async function supabaseUpsertQuizAnswers(studentId, unitId, answers) {
+  if (PREVIEW) return;
   await throwOnError(await supabaseClient.from('quiz_answers').upsert({
     student_id: studentId,
     unit_id: unitId,
@@ -187,6 +251,7 @@ async function supabaseUpsertQuizAnswers(studentId, unitId, answers) {
 }
 
 async function supabaseInsertExemptionAttempt(studentId, chapterId, score, passed) {
+  if (PREVIEW) return;
   await throwOnError(await supabaseClient.from('exemption_attempts').insert({
     student_id: studentId,
     chapter_id: chapterId,
@@ -198,6 +263,7 @@ async function supabaseInsertExemptionAttempt(studentId, chapterId, score, passe
 
 // התלמידה עצמה נוצרת רק בשרת (join_class), ולכן כאן יש רק עדכון
 function updateRemoteStudent(studentId, fields) {
+  if (PREVIEW) return;
   fireAndForget((async () => {
     await throwOnError(await supabaseClient.from('students').update(fields).eq('id', studentId));
   })());
@@ -221,6 +287,7 @@ function pushLocalBucketToRemote(bucket) {
 // מחזירים null אם לא נמצאה, או אם הייתה שגיאת רשת/שרת — במקרה הזה
 // ממשיכים עם התיקייה המקומית, אם יש.
 async function tryFetchRemoteBundle(studentId) {
+  if (PREVIEW) return null;
   try {
     const { data: studentRow, error: studentErr } = await supabaseClient
       .from('students')
@@ -273,6 +340,7 @@ export function getStudent() {
 }
 
 export function logout() {
+  if (PREVIEW) { exitPreview(); return; }
   writeJSON(KEY_CURRENT, null);
   location.hash = '#login';
   location.reload();
@@ -299,6 +367,7 @@ export function getSuggestedClassCode() {
 
 // { ok: true, cls, students } או { ok: false, reason: 'bad_code' | 'network' }
 export async function fetchClassRoster(code) {
+  if (PREVIEW) return { ok: false, reason: 'network' };
   const normCode = normalizeClassCode(code);
   if (normCode.length !== 6) return { ok: false, reason: 'bad_code' };
   const { data, error } = await supabaseClient.rpc('class_roster', { p_code: normCode });
@@ -315,6 +384,7 @@ export async function fetchClassRoster(code) {
 // מחזירה { ok: true, student } או { ok: false, reason }:
 // bad_code / bad_name / name_taken / bad_username / locked / network
 export async function loginWithClassCode(code, pick, gender) {
+  if (PREVIEW) return { ok: false, reason: 'network' };
   const normCode = normalizeClassCode(code);
   let g = gender === 'm' ? 'm' : 'f';
   let studentId = pick.studentId;
@@ -379,6 +449,7 @@ function getAllProgress() {
 }
 
 function mutateBucket(mutator) {
+  if (PREVIEW) { const b = previewBucket(); mutator(b); writeJSON(KEY_PREVIEW_DATA, b); return; }
   const key = getCurrentKey();
   if (!key) return;
   const all = getAllBuckets();
@@ -426,6 +497,8 @@ export function canAccessUnit(unitId) {
   if (!getStudent()) return false;
   const unit = findUnit(unitId);
   if (!unit) return false;
+  // תצוגת מורה: הכול פתוח, גם בלומדה בלי classMode. ההתקדמות נשמרת רק בתצוגה.
+  if (PREVIEW) return true;
   // במצב כיתה הכול פתוח — ההתקדמות עצמה עדיין נשמרת כרגיל.
   if (isClassMode()) return true;
 
@@ -504,6 +577,7 @@ export function chapterStatus(chapterId) {
 // קורית בכל מקרה ומיד.
 export function saveQuizAnswers(unitId, answersArray) {
   mutateBucket((bucket) => { bucket.quizAnswers[unitId] = answersArray; });
+  if (PREVIEW) return Promise.resolve(true); // נשמר במכשיר, וזה כל מה שיש בתצוגה
   const student = getStudent();
   if (!student) return Promise.resolve(false);
   const sync = supabaseUpsertQuizAnswers(student.id, unitId, answersArray).then(() => true);
@@ -523,6 +597,7 @@ export function getQuizAnswers(unitId) {
 // ישן אם בינתיים כתבו ממחשב אחר (בית הספר). הקורא מחליט מה עדכני יותר.
 // מחזירה { answers, submittedAt }, או null אם אין שורה, ו-undefined בשגיאת רשת.
 export async function fetchRemoteQuizAnswers(unitId) {
+  if (PREVIEW) return null; // כמו "אין שורה בשרת"
   const student = getStudent();
   if (!student) return undefined;
   try {

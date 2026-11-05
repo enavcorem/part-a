@@ -9,8 +9,8 @@
 // כמה נוסחאות, כשהמסיחים משקפים טעויות נפוצות (טווח שגוי, פונקציה שגויה
 // וכד').
 //
-// הרמזים המובנים (כשלא נכתב hint מפורש בתוכן) פונים בלשון התלמידה/תלמיד
-// לפי student.gender — כל שאר הטקסט הפדגוגי בקבצי content/ נכתב בכוונה
+// הרמזים המובנים והכפתורים (כשלא נכתב hint מפורש בתוכן) פונים בלשון
+// התלמידה/תלמיד/רבים לפי student.gender ודגל voice של הקורס (phrases.js) — כל שאר הטקסט הפדגוגי בקבצי content/ נכתב בכוונה
 // בלי לשון פנייה ישירה כדי שלא יצטרך שתי גרסאות.
 
 import * as Progress from '../progress.js';
@@ -73,7 +73,7 @@ function practiceNumeric(question, onSolved) {
   input.step = 'any';
   row.appendChild(input);
   if (question.unitLabel) row.appendChild(el('span', 'unit-label', question.unitLabel));
-  const btn = el('button', 'btn btn-primary', 'בדקי');
+  const btn = el('button', 'btn btn-primary', t('check_btn', gender()));
   row.appendChild(btn);
   const feedback = el('div', 'feedback');
   let solved = false;
@@ -297,7 +297,7 @@ export function renderQuestionExam(question, index) {
     // מוצגת בגלוי במקום ניקוד שגוי שקט, כדי שמי שמוסיפה שאלה מהסוג הזה
     // למבחן תגלה מיד שזה לא נתמך, ולא תגלה חודשים אחר כך שציונים היו שגויים.
     console.warn('סוג שאלה לא נתמך במבחן:', question.type);
-    wrap.appendChild(el('div', 'feedback hint', `⚠️ סוג השאלה "${question.type}" עדיין לא נתמך במצב מבחן — פני למורה.`));
+    wrap.appendChild(el('div', 'feedback hint', `⚠️ סוג השאלה "${question.type}" ${t('unsupported_exam_type', gender())}`));
     reveal = () => ({ isCorrect: false, userAnswerText: '(סוג שאלה לא נתמך)' });
   }
 

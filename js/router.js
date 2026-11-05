@@ -6,6 +6,7 @@ import * as Progress from './progress.js';
 import { renderLogin, renderRoadmap, renderGrandFinale } from './engine/roadmap-render.js';
 import { runUnit } from './engine/unit-runner.js';
 import { runQuiz } from './engine/quiz-runner.js';
+import { tv } from './engine/phrases.js';
 // כל קורס חייב קובץ content/widgets/index.js — גם אם הוא ריק. הייבוא כאן
 // בכוונה *בלי* try/catch: אם יש שגיאה בקובץ הווידג'טים של הקורס, עדיף
 // שהיא תתפוצץ בקול ולא שהלומדה תרוץ בשקט בלי הבלוקים שלה.
@@ -18,6 +19,8 @@ async function route() {
   if (!root) return;
   const hash = location.hash.replace(/^#/, '') || 'roadmap';
 
+  // תצוגת מורה: אין כניסה, יש משתמשת מקומית (progress.js)
+  if (hash === 'login' && Progress.isPreview()) { location.hash = '#roadmap'; return; }
   if (hash === 'login') return renderLogin(root);
 
   if (!Progress.getStudent()) { location.hash = '#login'; return; }
@@ -30,11 +33,11 @@ async function route() {
     const unit = findUnit(unitId);
     if (!unit || !unit.modulePath) { location.hash = '#roadmap'; return; }
     if (!Progress.canAccessUnit(unitId)) {
-      alert('היחידה הזו עדיין נעולה. השלימי את היחידות הקודמות בפרק כדי לפתוח אותה.');
+      alert(tv('unit_locked_alert'));
       location.hash = '#roadmap';
       return;
     }
-    root.innerHTML = '<p class="muted">טוענת...</p>';
+    root.innerHTML = `<p class="muted">${tv('loading')}</p>`;
     try {
       if (unit.type === 'quiz' || unit.type === 'exemption') {
         await runQuiz(unit, root);
@@ -55,6 +58,13 @@ async function route() {
 // אין צורך גם ב-DOMContentLoaded בנוסף לקריאה הישירה.
 window.addEventListener('hashchange', route);
 route();
+
+// תצוגת מורה: התג (מתג נקבה/זכר + יציאה) נטען רק כשצריך, ולכן לתלמידה אמיתית
+// הוא לא מוריד ולא מוסיף כלום. החלפת לשון בתג מציירת את המסך מחדש.
+if (Progress.isPreview()) {
+  import('./engine/preview-badge.js').then((m) => m.mountPreviewBadge());
+  window.addEventListener('lomda-preview-changed', route);
+}
 
 // המורה פותחת/סוגרת את הלומדה לכיתה בלוח — בודקים בכל טעינה. אם המצב
 // השתנה ואנחנו במסלול, מציירים אותו מחדש (באמצע יחידה לא מפריעים).

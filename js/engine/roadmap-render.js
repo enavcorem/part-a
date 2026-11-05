@@ -4,7 +4,7 @@
 import { CHAPTERS } from '../../content/manifest.js';
 import * as Progress from '../progress.js';
 import { COURSE } from '../../content/manifest.js';
-import { t } from './phrases.js';
+import { t, PLURAL_VOICE } from './phrases.js';
 import { consumeRoadmapScrollHint } from './scroll-hint.js';
 
 const STATUS_ICON = {
@@ -32,11 +32,11 @@ function escapeHtml(str) {
 const LOGIN_MSG = {
   bad_code: () => 'לא מצאנו כיתה עם הקוד הזה. כדאי לבדוק שוב את הספרות.',
   network: () => 'אין חיבור לשרת כרגע. כדאי לבדוק את האינטרנט ולנסות שוב.',
-  name_taken: (g) => (g === 'm' ? 'השם הזה כבר ברשימה — בחר אותו למעלה.' : 'השם הזה כבר ברשימה — בחרי אותו למעלה.'),
+  name_taken: (g) => t('name_taken', g),
   bad_name: () => 'צריך לכתוב שם מלא.',
-  no_pick: (g) => (g === 'm' ? 'בחר את השם שלך מהרשימה.' : 'בחרי את השם שלך מהרשימה.'),
+  no_pick: (g) => t('no_pick', g),
   bad_username: () => 'לא מצאנו את שם המשתמש הזה בכיתה. כדאי לבדוק מול הפתק מהמורה.',
-  no_username: (g) => (g === 'm' ? 'הקלד את שם המשתמש שקיבלת מהמורה.' : 'הקלידי את שם המשתמש שקיבלת מהמורה.'),
+  no_username: (g) => t('no_username', g),
   locked: () => 'בכיתה הזו נכנסים עם שם משתמש מהמורה.',
 };
 
@@ -100,7 +100,7 @@ export function renderLogin(container) {
         <button type="button" class="link-btn" id="change-code">קוד אחר</button>
       </div>
       <form id="username-form" novalidate>
-        <label class="muted" for="username">שם המשתמש שקיבלת מהמורה</label>
+        <label class="muted" for="username">${escapeHtml(t('username_label', gender))}</label>
         <input id="username" class="input-field" type="text" maxlength="40" autocomplete="off"
                autocapitalize="off" spellcheck="false">
         <div class="login-msg" role="alert"></div>
@@ -168,11 +168,9 @@ export function renderLogin(container) {
       genderSelect.value = g;
       setTitle(g);
       submitBtn.textContent = t('start_btn', g);
-      form.querySelector('#gender-label').textContent = g === 'm' ? 'איך נפנה אליך?' : 'איך נפנה אלייך?';
-      form.querySelector('#pick-label').textContent = students.length
-        ? (g === 'm' ? 'מי אתה? בחר את השם שלך' : 'מי את? בחרי את השם שלך')
-        : (g === 'm' ? 'עוד אין אף אחד ברשימה של הכיתה' : 'עוד אין אף אחת ברשימה של הכיתה');
-      form.querySelector('.name-option-new').textContent = g === 'm' ? '➕ אני חדש' : '➕ אני חדשה';
+      form.querySelector('#gender-label').textContent = t('gender_label', g);
+      form.querySelector('#pick-label').textContent = t(students.length ? 'pick_label' : 'pick_label_empty', g);
+      form.querySelector('.name-option-new').textContent = t('new_name_btn', g);
     }
 
     function choose(btn) {
@@ -187,6 +185,12 @@ export function renderLogin(container) {
     form.querySelectorAll('.name-option').forEach((b) => b.addEventListener('click', () => choose(b)));
     genderSelect.addEventListener('change', () => applyGender(genderSelect.value));
     stepEl.querySelector('#change-code').addEventListener('click', () => { setTitle('f'); showCodeStep(''); });
+    // בקורס בלשון רבים הכול כבר כתוב ברבים, ולכן אין טעם לשאול באיזו לשון לפנות.
+    // המין נשאר נשמר בשרת כמו תמיד (לפי הרשימה, או נקבה לשם חדש).
+    if (PLURAL_VOICE) {
+      genderSelect.style.display = 'none';
+      form.querySelector('#gender-label').style.display = 'none';
+    }
     applyGender(gender);
     if (!students.length) choose(form.querySelector('.name-option-new'));
 
@@ -280,9 +284,8 @@ export function renderRoadmap(container) {
   // לבלבל מי שרק מתחילה — לכן מכוונים לאתגר הפטור כנקודת פתיחה.
   if (Progress.isCourseOpenForClass() && !Progress.isClassMode()) {
     const open = el('div', 'course-open-note');
-    const f = student.gender !== 'm';
     open.innerHTML = `🔓 <strong>כל הפרקים פתוחים לחזרה.</strong>
-      ${f ? 'לא בטוחה' : 'לא בטוח'} מאיפה להתחיל? אתגר הפטור בראש כל פרק יגיד לך מה כבר יש לך ומה כדאי לחזק.`;
+      ${t('course_open_note', student.gender)}`;
     wrap.appendChild(open);
   }
 
@@ -303,10 +306,13 @@ export function renderRoadmap(container) {
     ch.units.forEach(u => wrap.appendChild(renderUnitCard(u, ch)));
   });
 
-  const logoutBtn = el('button', 'btn btn-ghost', 'התנתקות');
-  logoutBtn.style.marginTop = 'var(--space-5)';
-  logoutBtn.addEventListener('click', Progress.logout);
-  wrap.appendChild(logoutBtn);
+  // בתצוגת מורה היציאה היא בתג התצוגה, לא "התנתקות" של תלמידה
+  if (!Progress.isPreview()) {
+    const logoutBtn = el('button', 'btn btn-ghost', 'התנתקות');
+    logoutBtn.style.marginTop = 'var(--space-5)';
+    logoutBtn.addEventListener('click', Progress.logout);
+    wrap.appendChild(logoutBtn);
+  }
 
   container.appendChild(wrap);
 

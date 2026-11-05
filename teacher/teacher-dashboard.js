@@ -162,6 +162,8 @@ function enterDashboard(login, teacher, secret) {
     renderNoAccess(mine);
     return;
   }
+  // כפתור התצוגה (הכתובת ../?preview=1 כתובה ב-index.html): רק למי שיש לה גישה ללומדה
+  $('preview-btn').hidden = false;
   loadData();
 }
 
@@ -453,11 +455,37 @@ function renderStats() {
   ].map(([label, num]) => `<div class="stat-tile"><div class="stat-num">${num}</div><div class="stat-label">${label}</div></div>`).join('');
 }
 
+// "🎯 נושאים לחיזוק": שורה מקופלת אחת, עד 5 נושאים. סופרת טעויות לפי השדה
+// `topic` של תשובות המבחן, מהנתונים שכבר נטענו (quizByStudent), בלי שאילתה
+// נוספת. רשומות ישנות בלי topic לא נספרות, ואם אין אף אחת עם topic השורה
+// לא מוצגת בכלל. נספרות התלמידות שמוצגות עכשיו בטבלה (לפי סינון הכיתה והשם).
+function renderWeakTopics(students) {
+  const box = $('weak-topics');
+  const counts = {};
+  let hasTopic = false;
+  students.forEach((s) => {
+    Object.values(quizByStudent[s.id] || {}).forEach((answers) => {
+      (answers || []).forEach((a) => {
+        if (!a || a.open === true || typeof a.topic !== 'string' || !a.topic.trim()) return;
+        hasTopic = true;
+        if (!a.is_correct) counts[a.topic] = (counts[a.topic] || 0) + 1;
+      });
+    });
+  });
+  box.hidden = !hasTopic;
+  if (!hasTopic) return;
+  const top = Object.entries(counts).sort((x, y) => y[1] - x[1]).slice(0, 5);
+  $('weak-topics-list').innerHTML = top.length
+    ? top.map(([topic, n]) => `<li>${escapeHtml(topic)} <span class="muted">· ${n} ${n === 1 ? 'טעות' : 'טעויות'}</span></li>`).join('')
+    : '<li class="muted">אין טעויות בנושאים כרגע</li>';
+}
+
 function renderTable() {
   const filterClass = $('filter-class').value;
   const filterName = $('filter-name').value.trim().toLowerCase();
 
   if (allStudents.length === 0) {
+    renderWeakTopics([]);
     $('loading-msg').style.display = 'none';
     $('no-students').style.display = 'block';
     $('students-table').style.display = 'none';
@@ -469,6 +497,8 @@ function renderTable() {
     if (filterName && !s.name.toLowerCase().includes(filterName)) return false;
     return true;
   });
+
+  renderWeakTopics(rows);
 
   const tbody = $('students-tbody');
   tbody.innerHTML = '';

@@ -8,6 +8,7 @@ import { showCelebrateModal } from './celebrate.js';
 import { setRoadmapScrollHint } from './scroll-hint.js';
 import { getNextUnit } from '../../content/manifest.js';
 import * as Progress from '../progress.js';
+import { tv } from './phrases.js';
 
 export async function runUnit(unit, container) {
   const mod = await import(`../../content/${unit.modulePath}`);
@@ -45,7 +46,7 @@ export async function runUnit(unit, container) {
     nextBtn.type = 'button';
     nextBtn.className = 'btn btn-primary btn-block';
     nextBtn.style.marginTop = 'var(--space-4)';
-    nextBtn.textContent = slideIndex === data.slides.length - 1 ? 'סיימי יחידה 🏁' : 'הבא ←';
+    nextBtn.textContent = slideIndex === data.slides.length - 1 ? tv('finish_unit_btn') : 'הבא ←';
     nextBtn.disabled = !solved;
 
     if (slide.question) {
@@ -102,7 +103,7 @@ export async function runUnit(unit, container) {
         }
         showCelebrateModal({
           icon: '🎉',
-          title: 'כל הכבוד! סיימת את היחידה',
+          title: tv('unit_done_title'),
           subtitle: data.title || unit.title,
           xpGained: 10,
           onClose: () => { location.hash = '#roadmap'; },

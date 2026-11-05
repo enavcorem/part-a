@@ -3,6 +3,8 @@
 // זה המקום היחיד שיודע איך להפוך אובייקט בלוק ל-HTML בפועל.
 // הוספת סוג בלוק חדש = הוספת מקרה אחד כאן, לא שינוי בקבצי התוכן הקיימים.
 
+import { tv } from './phrases.js';
+
 function el(tag, className, html) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -145,7 +147,7 @@ function renderOpenAnswer(block) {
   const wrap = el('div', 'block oa-answer oa-loading');
   import('./open-answer.js')
     .then((m) => m.renderOpenAnswer(block, wrap))
-    .catch((e) => { console.warn('open-answer לא נטען:', e); wrap.textContent = 'השדה לא נטען. רעננו את הדף.'; });
+    .catch((e) => { console.warn('open-answer לא נטען:', e); wrap.textContent = tv('oa_load_failed'); });
   return wrap;
 }
 

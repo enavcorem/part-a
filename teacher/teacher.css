@@ -184,6 +184,13 @@
 .courses-bar { margin-bottom: var(--space-4); font-size: 0.9rem; }
 .course-switch { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--text-muted); }
 .course-switch .input-field { width: auto; min-width: 240px; margin: 0; }
+/* "🎯 נושאים לחיזוק": שורה מקופלת אחת מעל הטבלה */
+.weak-topics { margin-bottom: var(--space-3); font-size: 0.9rem; }
+.weak-topics summary { cursor: pointer; font-weight: 700; color: var(--color-primary-dark); }
+.weak-topics ul { margin: var(--space-2) 0 0; padding-inline-start: 1.2rem; }
+/* כפתור "תצוגה כמו תלמידה" בשורה העליונה (.btn קובע display ולכן hidden צריך עזרה) */
+#preview-btn { font-size: 0.85rem; padding: 6px 14px; text-decoration: none; }
+#preview-btn[hidden] { display: none; }
 .teacher-top .link-btn { background: none; border: none; padding: 0; font: inherit; color: var(--color-primary-dark); text-decoration: underline; cursor: pointer; }
 .no-access { grid-column: 1 / -1; }
 .no-access h2 { margin-top: 0; }

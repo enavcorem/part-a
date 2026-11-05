@@ -49,12 +49,19 @@ function checkQuestion(q, where, isExam) {
   }
   if (!q.prompt) problems.push(`${where}: שאלה בלי prompt`);
 
-  if (q.type === 'mc') {
-    const n = (q.options || []).filter((o) => o.correct).length;
-    if (n !== 1) problems.push(`${where}: ל-mc יש ${n} תשובות נכונות (צריך בדיוק 1)`);
+  // "תשובה נכונה אחת" נבדקת לפי צורת השאלה, לא לפי שם הסוג: כל שאלה שיש בה
+  // options עם correct (mc, chart-mc, וכל סוג שיירשם בעתיד) צריכה בדיוק אחת.
+  // mc נבדק תמיד, גם אם שכחו לכתוב correct בכל האפשרויות.
+  const hasCorrectShape = Array.isArray(q.options)
+    && q.options.some((o) => o && typeof o === 'object' && 'correct' in o);
+  if (q.type === 'mc' || hasCorrectShape) {
+    const n = (q.options || []).filter((o) => o && o.correct).length;
+    if (n !== 1) problems.push(`${where}: ל-${q.type} יש ${n} תשובות נכונות (צריך בדיוק 1)`);
   }
-  if (q.type === 'numeric' && typeof q.answer !== 'number') {
-    problems.push(`${where}: לשאלה מספרית אין answer מספרי`);
+  // כל סוג שהשם שלו מסתיים ב-numeric (numeric, chart-numeric...) צריך answer מספרי
+  if (typeof q.type === 'string' && q.type.endsWith('numeric')
+      && !(typeof q.answer === 'number' && Number.isFinite(q.answer))) {
+    problems.push(`${where}: לשאלה מסוג ${q.type} אין answer מספרי`);
   }
   if (q.type === 'match') {
     if (!Array.isArray(q.pairs) || q.pairs.length < 2) problems.push(`${where}: שאלת התאמה צריכה לפחות שני זוגות`);

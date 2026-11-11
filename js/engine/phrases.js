@@ -165,9 +165,9 @@ const PHRASES = {
   },
 };
 
-// 'f' | 'm' | 'p'. gender = מה שהתלמיד/ה בחר/ה; בקורס `voice: 'plural'` תמיד 'p'.
+// 'f' | 'm' | 'p'. gender = מה שהתלמיד/ה בחר/ה ('p' רק בתצוגת מורה); בקורס `voice: 'plural'` תמיד 'p'.
 export function voice(gender) {
-  if (PLURAL_VOICE) return 'p';
+  if (PLURAL_VOICE || gender === 'p') return 'p'; // 'p' = תצוגת מורה ברבים
   return gender === 'm' ? 'm' : 'f';
 }
 

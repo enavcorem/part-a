@@ -1,6 +1,6 @@
 // ===== תג "תצוגת מורה" (נטען רק עם ?preview=1) =====
 // פס קטן קבוע בתחתית המסך: מי אני (מורה, תצוגה), באיזו לשון מוצג הטקסט
-// (מתג נקבה/זכר; בקורס `voice: 'plural'` רק חיווי "רבים"), ו"יציאה מהתצוגה".
+// (מתג רבים/נקבה/זכר, ברירת מחדל רבים; בקורס `voice: 'plural'` רק חיווי "רבים"), ו"יציאה מהתצוגה".
 // הנתונים עצמם נשמרים ב-progress.js במפתח נפרד, בלי מסד. ראו שם.
 
 import * as Progress from '../progress.js';
@@ -30,7 +30,7 @@ export function mountPreviewBadge() {
   } else {
     group.setAttribute('role', 'group');
     group.setAttribute('aria-label', 'לשון הפנייה');
-    [['f', 'נקבה'], ['m', 'זכר']].forEach(([g, text]) => {
+    [['p', 'רבים'], ['f', 'נקבה'], ['m', 'זכר']].forEach(([g, text]) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.dataset.gender = g;
@@ -55,7 +55,8 @@ export function mountPreviewBadge() {
   function paint() {
     const s = Progress.getStudent();
     group.querySelectorAll('button[data-gender]').forEach((b) => {
-      b.setAttribute('aria-pressed', String(!!s && b.dataset.gender === (s.gender === 'm' ? 'm' : 'f')));
+      const cur = s && (s.gender === 'm' || s.gender === 'p') ? s.gender : 'f';
+      b.setAttribute('aria-pressed', String(!!s && b.dataset.gender === cur));
     });
   }
   paint();

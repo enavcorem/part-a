@@ -185,16 +185,16 @@ function previewBucket() {
   const saved = readJSON(KEY_PREVIEW_DATA, null);
   if (saved && saved.student) return saved;
   return {
-    student: { id: 'preview-teacher', name: 'מורה (תצוגה)', school: '', class_name: '', gender: 'f', preview: true },
+    student: { id: 'preview-teacher', name: 'מורה (תצוגה)', school: '', class_name: '', gender: 'p', preview: true },
     progress: {}, quizAnswers: {}, exemptionAttempts: [],
   };
 }
 
-// מתג נקבה/זכר בתג התצוגה
+// מתג רבים/נקבה/זכר בתג התצוגה (ברירת המחדל בתצוגה: רבים). 'p' קיים רק בתצוגה — תלמידים נשמרים f/m
 export function setPreviewGender(g) {
   if (!PREVIEW) return;
   const b = previewBucket();
-  b.student.gender = g === 'm' ? 'm' : 'f';
+  b.student.gender = (g === 'm' || g === 'p') ? g : 'f';
   writeJSON(KEY_PREVIEW_DATA, b);
 }
 

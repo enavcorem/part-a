@@ -18,7 +18,7 @@ import { t } from './phrases.js';
 
 function gender() {
   const s = Progress.getStudent();
-  return (s && s.gender === 'm') ? 'm' : 'f';
+  return s ? s.gender : 'f'; // phrases.voice() מנרמל (m / p / כל השאר = f)
 }
 
 function el(tag, className, html) {

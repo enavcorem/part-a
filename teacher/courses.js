@@ -9,6 +9,9 @@ export const COURSES = [
   // כיתה י'. לומדה של כרמל (מורה שותפה), בתת-תיקייה בריפו הסטטיסטיקה
   { id: 'cs1', title: 'סוגי גרפים', icon: '📊', grade: 'י׳', url: 'https://enavcorem.github.io/statistics-learning/graphs-10/' },
   { id: 'stat', title: 'סטטיסטיקה', icon: '📊', grade: 'י״א', url: 'https://enavcorem.github.io/statistics-learning/' },
+  // של כרמל (מורה שותפה), גם הן בתת-תיקיות בריפו הסטטיסטיקה
+  { id: 'cs2', title: 'מעבדת הרבעונים', icon: '📦', grade: 'י״א', url: 'https://enavcorem.github.io/statistics-learning/quartiles-11/' },
+  { id: 'cs3', title: 'רגרסיה לינארית', icon: '📉', grade: 'י״א', url: 'https://enavcorem.github.io/statistics-learning/regression-11/' },
   { id: 'xlookup', title: 'XLOOKUP', icon: '🔗', grade: 'י״א', url: 'https://enavcorem.github.io/xlookup-learning/' },
   { id: 'func', title: 'ארגז הכלים — פונקציות', icon: '🧰', grade: 'י״א', url: 'https://enavcorem.github.io/functions-learning/' },
   // אתר אחד, שלוש לומדות: enavcorem.github.io/excel/<id>/

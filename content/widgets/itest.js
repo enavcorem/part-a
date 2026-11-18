@@ -15,6 +15,8 @@
 //   tf     — נכון / לא נכון, ונימוק
 //   choice — בחירה מתוך options (למשל תומך / סותר), ונימוק
 //   text   — תשובה כתובה בלבד
+//   why: false (ב-tf / choice) — בחירה בלבד, בלי תיבת נימוק. 18.11: הלומדה הייתה מתישה מרוב כתיבה,
+//          ולכן רוב הפריטים בוחרים בלבד, והתשובה לדוגמה (עם הנימוק) נשארת. הערך נשמר באותה צורה { choice, text }.
 // משאב (resource): { tab: "גרף א'", chart: {...} } | { tab, source: {...} } | { tab, html }
 //
 // כל תשובה נשמרת דרך store.js כשדה open: true, ולכן מופיעה בלוח המורה כטקסט
@@ -95,6 +97,7 @@ function renderItem(item, ctx) {
     text: (saved && typeof saved === 'object') ? saved.text || '' : (typeof saved === 'string' ? saved : ''),
   };
   const kind = item.kind || 'text';
+  const noWhy = kind !== 'text' && item.why === false;
   const options = kind === 'tf' ? ['נכון', 'לא נכון'] : (item.options || []);
   const controls = [];
 
@@ -124,15 +127,17 @@ function renderItem(item, ctx) {
     wrap.appendChild(row);
   }
 
-  const ta = el('textarea', 'input-field pa-textarea');
-  ta.rows = item.rows || (kind === 'text' ? 4 : 3);
-  ta.placeholder = item.placeholder || (kind === 'text' ? 'כתבו כאן את התשובה' : '');
-  ta.setAttribute('aria-label', kind === 'text' ? 'תשובה' : 'נימוק');
-  ta.value = state.text;
-  ta.addEventListener('input', () => { state.text = ta.value; commit(); });
-  if (kind !== 'text') wrap.appendChild(el('div', 'pa-why-label', 'נימוק:'));
-  wrap.appendChild(ta);
-  controls.push(ta);
+  if (!noWhy) {
+    const ta = el('textarea', 'input-field pa-textarea');
+    ta.rows = item.rows || (kind === 'text' ? 4 : 3);
+    ta.placeholder = item.placeholder || (kind === 'text' ? 'כתבו כאן את התשובה' : '');
+    ta.setAttribute('aria-label', kind === 'text' ? 'תשובה' : 'נימוק');
+    ta.value = state.text;
+    ta.addEventListener('input', () => { state.text = ta.value; commit(); });
+    if (kind !== 'text') wrap.appendChild(el('div', 'pa-why-label', 'נימוק:'));
+    wrap.appendChild(ta);
+    controls.push(ta);
+  }
 
   if (item.model) {
     const model = buildModel(item.model, ctx.key);
@@ -151,7 +156,10 @@ function renderItem(item, ctx) {
     wrap.classList.remove('pa-loading');
   });
 
-  wrap.isAnswered = () => (kind === 'text' ? state.text.trim() !== '' : state.choice !== '' && state.text.trim() !== '');
+  wrap.isAnswered = () => {
+    if (kind === 'text') return state.text.trim() !== '';
+    return state.choice !== '' && (noWhy || state.text.trim() !== '');
+  };
   return wrap;
 }
 

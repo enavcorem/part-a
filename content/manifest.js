@@ -35,12 +35,12 @@ export const CHAPTERS = [
     colorVar: 'chapter-1',
     units: [
       { id: 'pa-ch1-u1', title: 'איך נראית שאלת גרפים', type: 'lesson', icon: '🖥️', estMinutes: 8, modulePath: 'ch1/ch1-u1-anatomy.js' },
-      { id: 'pa-ch1-u2', title: 'פענוח גרף, צעד אחר צעד', type: 'lesson', icon: '🔎', estMinutes: 18, modulePath: 'ch1/ch1-u2-decode.js' },
+      { id: 'pa-ch1-u2', title: 'פענוח גרף, צעד אחר צעד', type: 'lesson', icon: '🔎', estMinutes: 16, modulePath: 'ch1/ch1-u2-decode.js' },
       { id: 'pa-ch1-u3', title: 'גרפים מורכבים', type: 'lesson', icon: '🧩', estMinutes: 18, modulePath: 'ch1/ch1-u3-complex.js' },
-      { id: 'pa-ch1-u4', title: 'נכון או לא נכון: נימוק מלא', type: 'lesson', icon: '✍️', estMinutes: 12, modulePath: 'ch1/ch1-u4-full-answer.js' },
-      { id: 'pa-ch1-u5', title: 'המוקשים בטענות', type: 'lesson', icon: '⚠️', estMinutes: 18, modulePath: 'ch1/ch1-u5-traps.js' },
+      { id: 'pa-ch1-u4', title: 'נכון או לא נכון: נימוק מלא', type: 'lesson', icon: '✍️', estMinutes: 14, modulePath: 'ch1/ch1-u4-full-answer.js' },
+      { id: 'pa-ch1-u5', title: 'המוקשים בטענות', type: 'lesson', icon: '⚠️', estMinutes: 16, modulePath: 'ch1/ch1-u5-traps.js' },
       { id: 'pa-ch1-u6', title: 'מדדים מתוך גרף', type: 'lesson', icon: '📏', estMinutes: 12, modulePath: 'ch1/ch1-u6-measures.js' },
-      { id: 'pa-ch1-u7', title: 'סימולציה: שאלת גרפים', type: 'lab', icon: '🎯', estMinutes: 20, modulePath: 'ch1/ch1-u7-simulation.js' },
+      { id: 'pa-ch1-u7', title: 'סימולציה: שאלת גרפים', type: 'lab', icon: '🎯', estMinutes: 15, modulePath: 'ch1/ch1-u7-simulation.js' },
       { id: 'pa-ch1-quiz', title: 'מבחן פרק: גרפים', type: 'quiz', icon: '📝', estMinutes: 10, modulePath: 'ch1/ch1-quiz.js' },
     ],
   },
@@ -52,9 +52,9 @@ export const CHAPTERS = [
     colorVar: 'chapter-2',
     units: [
       { id: 'pa-ch2-u1', title: 'פענוח מקור, צעד אחר צעד', type: 'lesson', icon: '🔎', estMinutes: 12, modulePath: 'ch2/ch2-u1-decode.js' },
-      { id: 'pa-ch2-u2', title: 'מקור מול גרף: תומך, סותר, משלים או לא קשור', type: 'lesson', icon: '🔗', estMinutes: 15, modulePath: 'ch2/ch2-u2-relations.js' },
+      { id: 'pa-ch2-u2', title: 'מקור מול גרף: תומך, סותר, משלים או לא קשור', type: 'lesson', icon: '🔗', estMinutes: 13, modulePath: 'ch2/ch2-u2-relations.js' },
       { id: 'pa-ch2-u3', title: 'הסבר, השלמה והמלצה', type: 'lesson', icon: '💡', estMinutes: 15, modulePath: 'ch2/ch2-u3-explain.js' },
-      { id: 'pa-ch2-u4', title: 'סימולציה: שאלת מקורות', type: 'lab', icon: '🎯', estMinutes: 20, modulePath: 'ch2/ch2-u4-simulation.js' },
+      { id: 'pa-ch2-u4', title: 'סימולציה: שאלת מקורות', type: 'lab', icon: '🎯', estMinutes: 12, modulePath: 'ch2/ch2-u4-simulation.js' },
       { id: 'pa-ch2-quiz', title: 'מבחן פרק: מקורות', type: 'quiz', icon: '📝', estMinutes: 10, modulePath: 'ch2/ch2-quiz.js' },
     ],
   },
@@ -69,7 +69,7 @@ export const CHAPTERS = [
     // המורה פותחת את הלומדה לכיתה ("🔓 הכול פתוח"), וכך מגיעים לפרק 3 גם בלי פרקים 1-2.
     unordered: true,
     units: [
-      { id: 'pa-ch3-u1', title: 'תרגול בגרות: 2024, שאלות 2 ו-3', type: 'lab', icon: '⏱️', estMinutes: 60, modulePath: 'ch3/ch3-u1-practice.js' },
+      { id: 'pa-ch3-u1', title: 'תרגול בגרות: 2024, שאלות 2 ו-3', type: 'lab', icon: '⏱️', estMinutes: 45, modulePath: 'ch3/ch3-u1-practice.js' },
       { id: 'pa-ch3-u2', title: 'מפת שאלות מהבגרויות', type: 'lesson', icon: '🗺️', estMinutes: 5, modulePath: 'ch3/ch3-u2-map.js' },
       // המיני-בגרות של 25.11: נעולה בקוד מהמורה. ביום המבחן פותחים את הלומדה לכיתה בלוח.
       { id: 'pa-ch3-u3', title: 'מיני-בגרות 25.11: חלק א׳', type: 'lab', icon: '🏛️', estMinutes: 45, modulePath: 'ch3/ch3-u3-exam.js' },

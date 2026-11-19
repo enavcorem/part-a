@@ -3,7 +3,7 @@
 // היחידה שהיא נמצאת בה כרגע), ומרנדר אותו לפי הסכימה המשותפת (blocks + question).
 
 import { renderBlocks } from './blocks.js';
-import { renderQuestionPractice } from './question-types.js';
+import { renderContentQuestionPractice } from './question-chart.js';
 import { showCelebrateModal } from './celebrate.js';
 import { setRoadmapScrollHint } from './scroll-hint.js';
 import { getNextUnit } from '../../content/manifest.js';
@@ -50,7 +50,7 @@ export async function runUnit(unit, container) {
     nextBtn.disabled = !solved;
 
     if (slide.question) {
-      const qEl = renderQuestionPractice(slide.question, () => {
+      const qEl = renderContentQuestionPractice(slide.question, () => {
         solved = true;
         nextBtn.disabled = false;
       });

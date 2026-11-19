@@ -37,6 +37,7 @@ const PRACTICE_Q = new Set(QT.practice);
 const EXAM_Q = new Set(QT.exam);
 
 const problems = [];
+const warnings = []; // אזהרות לא מכשילות (exit 0), רק מודפסות
 let slides = 0;
 const openKeys = new Map(); // key של open-answer → איפה הופיע
 let questions = 0;
@@ -48,6 +49,22 @@ function checkQuestion(q, where, isExam) {
     problems.push(`${where}: סוג שאלה לא נתמך ${isExam ? 'במבחן' : 'בשיעור'} — "${q.type}"`);
   }
   if (!q.prompt) problems.push(`${where}: שאלה בלי prompt`);
+
+  // שדה chart (גרף מעל האפשרויות): אובייקט עם type של בלוק רשום. המנוע מצייר אותו
+  // בעצמו רק בשאלות mc/numeric. סוג מותאם שמסתיים ב-mc/numeric (chart-mc, q-box-mc...)
+  // עוטף את זה בעצמו ולכן לא מקבל אזהרה. כל סוג אחר עם chart → אזהרה, כי הגרף לא יוצג.
+  if ('chart' in q && q.chart !== undefined) {
+    const c = q.chart;
+    if (!c || typeof c !== 'object' || Array.isArray(c) || typeof c.type !== 'string') {
+      problems.push(`${where}: chart חייב להיות אובייקט עם type (בלוק גרף), למשל { type: 'chart-bar', data: [...] }`);
+    } else if (!BLOCKS.has(c.type)) {
+      problems.push(`${where}: chart.type "${c.type}" הוא לא בלוק מוכר`);
+    }
+    const t = String(q.type);
+    if (t !== 'mc' && t !== 'numeric' && !/(mc|numeric)$/.test(t)) {
+      warnings.push(`${where}: יש chart על שאלה מסוג "${t}" — המנוע מצייר גרף רק ב-mc/numeric, כאן הגרף לא יוצג (אלא אם הסוג מצייר אותו בעצמו)`);
+    }
+  }
 
   // "תשובה נכונה אחת" נבדקת לפי צורת השאלה, לא לפי שם הסוג: כל שאלה שיש בה
   // options עם correct (mc, chart-mc, וכל סוג שיירשם בעתיד) צריכה בדיוק אחת.
@@ -145,6 +162,11 @@ console.log(`קורס: ${manifest.COURSE?.title || manifest.COURSE_ID || '(לל�
 console.log(`נבדקו ${units.length} יחידות · ${slides} סליידים · ${questions} שאלות`);
 console.log(`סוגי בלוק מוכרים: ${[...BLOCKS].join(', ')}`);
 console.log(`סוגי שאלה — שיעור: ${QT.practice.join(', ')} · מבחן: ${QT.exam.join(', ')}`);
+
+if (warnings.length) {
+  console.log(`\n⚠️ ${warnings.length} אזהרות (לא מכשילות):`);
+  warnings.forEach((w) => console.log('  - ' + w));
+}
 
 if (problems.length) {
   console.log(`\n❌ ${problems.length} בעיות:`);

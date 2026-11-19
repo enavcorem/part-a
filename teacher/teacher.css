@@ -120,6 +120,8 @@
 .answers-table tr.correct-row { background: #F5FDF8; }
 .answers-table tr.wrong-row { background: #FFF5F5; }
 .answers-table td.open-answer { white-space: pre-wrap; line-height: 1.6; }
+/* bidiCell (19.11): נוסחה לבד היא תא LTR, אבל מיושרת לימין כמו הכותרת */
+.answers-table td[dir] { text-align: right; }
 .answers-table tr.open-row td:first-child { width: 28%; color: var(--text-muted); }
 
 .exemption-chip {

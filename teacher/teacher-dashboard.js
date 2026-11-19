@@ -74,6 +74,42 @@ function escapeHtml(str) {
   return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// טקסט שנשמר מתוכן הלומדה (מבחן) יכול להכיל HTML (<span class="ltr">...).
+// כאן הופכים אותו לטקסט נקי: DOMParser בונה מסמך "מת" (בלי הרצת סקריפטים
+// ובלי טעינת תמונות), ומשם לוקחים רק textContent. אחר כך עדיין עושים escapeHtml.
+// לא להשתמש בזה בתשובות פתוחות: שם הטקסט נכתב ע"י תלמידה (למשל "<5"), והוא נשאר כמו שהוא.
+function htmlToText(str) {
+  if (str == null) return '';
+  const s = String(str);
+  if (s.indexOf('<') === -1 && s.indexOf('&') === -1) return s;
+  try {
+    const doc = new DOMParser().parseFromString(s.replace(/<br\s*\/?>/gi, ' '), 'text/html');
+    return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+  } catch (e) {
+    return s;
+  }
+}
+
+// תא בטבלת תשובות המבחנים: טקסט נקי (אחרי htmlToText) → HTML מוכן לתא.
+// dir="auto" לא מספיק: "C3 תהיה =B3*E1" מתחיל באנגלית, ולכן כל המשפט התהפך.
+// עכשיו: יש עברית → התא RTL, וכל נוסחה/מילה באנגלית עטופה ב-<bdi dir="ltr">
+// (כך =SUM(A1:A5) לא הופך ל-SUM(A1:A5)=). אין עברית (נוסחה לבד) → התא LTR.
+const HEBREW = /[֐-׿]/;
+function bidiCell(text) {
+  const s = String(text ?? '');
+  if (!HEBREW.test(s)) return `<td dir="ltr">${escapeHtml(s)}</td>`;
+  let html = '';
+  let last = 0;
+  // רצף שמתחיל ב-= / $ / אות לטינית ונמשך עד האות העברית הבאה, בלי רווח ופיסוק בסופו
+  s.replace(/[=$A-Za-z][^֐-׿]*/g, (m, at) => {
+    const token = m.replace(/[\s,.;:!?]+$/, '');
+    html += escapeHtml(s.slice(last, at)) + `<bdi dir="ltr">${escapeHtml(token)}</bdi>`;
+    last = at + token.length;
+    return m;
+  });
+  return `<td dir="rtl">${html}${escapeHtml(s.slice(last))}</td>`;
+}
+
 function $(id) { return document.getElementById(id); }
 
 let allStudents = [];
@@ -476,7 +512,7 @@ function renderWeakTopics(students) {
   if (!hasTopic) return;
   const top = Object.entries(counts).sort((x, y) => y[1] - x[1]).slice(0, 5);
   $('weak-topics-list').innerHTML = top.length
-    ? top.map(([topic, n]) => `<li>${escapeHtml(topic)} <span class="muted">· ${n} ${n === 1 ? 'טעות' : 'טעויות'}</span></li>`).join('')
+    ? top.map(([topic, n]) => `<li>${escapeHtml(htmlToText(topic))} <span class="muted">· ${n} ${n === 1 ? 'טעות' : 'טעויות'}</span></li>`).join('')
     : '<li class="muted">אין טעויות בנושאים כרגע</li>';
 }
 
@@ -592,8 +628,8 @@ function buildDetailHTML(student) {
       answers.forEach((a) => {
         html += `<tr class="${a.is_correct ? 'correct-row' : 'wrong-row'}">
           <td>${escapeHtml(a.question_number)}</td>
-          <td>${escapeHtml(String(a.question_text || '').slice(0, 90))}</td>
-          <td>${escapeHtml(a.answer_given || '—')}</td>
+          ${bidiCell(htmlToText(a.question_text).slice(0, 90))}
+          ${bidiCell(htmlToText(a.answer_given) || '—')}
           <td>${a.is_correct ? '✅' : '❌'}</td>
         </tr>`;
       });

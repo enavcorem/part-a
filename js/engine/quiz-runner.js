@@ -1,6 +1,6 @@
 // ===== "נגן" מבחן — מבחן פרק רגיל, מבחן מסכם, ואתגר-פטור (אותו מנוע, מצב שונה) =====
 
-import { renderQuestionExam } from './question-types.js';
+import { renderContentQuestionExam } from './question-chart.js';
 import { showCelebrateModal, fireConfetti } from './celebrate.js';
 import { setRoadmapScrollHint } from './scroll-hint.js';
 import { getNextUnit, getNextChapter } from '../../content/manifest.js';
@@ -15,6 +15,21 @@ function topicForSave(topic) {
   if (typeof topic !== 'string') return null;
   const clean = topic.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
   return clean ? clean.slice(0, TOPIC_MAX) : null;
+}
+
+// מוסיף "✓ נכון" / "✗ לא נכון" בסוף שורת השאלה (או בראש הבלוק אם אין שורת שאלה).
+// role=status, והתווית עצמה היא טקסט: קוראי מסך מקריאים את התוצאה גם בלי הצבע.
+// סוג מותאם שכבר מציג הערה משלו ב-reveal (cs2–cs5 של כרמל: q-verdict, r-verdict, c-verdict,
+// f-verdict) → מדלגים, אחרת יש שתי הערות. המוסכמה: class שמכיל "verdict" (בודקת 19.11).
+function addVerdictLabel(root, isCorrect) {
+  if (!root || !root.querySelector || root.querySelector('[class*="verdict"]')) return;
+  const label = document.createElement('span');
+  label.className = 'question-verdict ' + (isCorrect ? 'is-correct' : 'is-wrong');
+  label.setAttribute('role', 'status');
+  label.textContent = isCorrect ? '✓ נכון' : '✗ לא נכון';
+  const prompt = root.querySelector('.question-prompt');
+  if (prompt) prompt.appendChild(label);
+  else root.prepend(label);
 }
 
 export async function runQuiz(unit, container) {
@@ -40,7 +55,7 @@ export async function runQuiz(unit, container) {
   const card = document.createElement('div');
   card.className = 'card';
 
-  const rendered = data.questions.map((q, i) => renderQuestionExam(q, i));
+  const rendered = data.questions.map((q, i) => renderContentQuestionExam(q, i));
   rendered.forEach(r => card.appendChild(r.el));
 
   const submitBtn = document.createElement('button');
@@ -60,6 +75,11 @@ export async function runQuiz(unit, container) {
 
   submitBtn.addEventListener('click', () => {
     const results = rendered.map((r, i) => ({ ...r.reveal(), question: data.questions[i] }));
+    // תווית טקסט "✓ נכון / ✗ לא נכון" ליד כל שאלה, בנוסף לצבע (עיוורון צבעים, מקרן,
+    // צילומי מסך). נעשה כאן ולא בתוך סוגי השאלות, ולכן עובד גם בסוגים מותאמים.
+    // "נכון / לא נכון" לא פונה לאף אחד, ולכן מתאים לכל לשון.
+    rendered.forEach((r, i) => addVerdictLabel(r.el, results[i].isCorrect));
+
     const correctCount = results.filter(r => r.isCorrect).length;
     const score = results.length ? Math.round((correctCount / results.length) * 100) : 0;
     submitBtn.disabled = true;
